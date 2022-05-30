@@ -1,7 +1,8 @@
-#include "homework3.h"
+#include "hw3.h"
 
 void HW3::merge(int *array, int l, int m, int r) {
     int i, j, k, nl, nr;
+    //размеры правого и левого подмассивов
     nl = m-l+1; nr = r-m;
     int larr[nl], rarr[nr];
     //заполнение подмассивов
@@ -67,4 +68,3 @@ HW3::HW3(int size) {
     len = size;
     run();
 }
-
