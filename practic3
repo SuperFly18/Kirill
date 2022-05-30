@@ -1,87 +1,70 @@
-#include<iostream>
-using namespace std;
-int counterIterations = 0;
-int counterSwap = 0;
-const int nmax = 100000;
-void Merge(int arr[], int begin, int end)
-{
-	int i = begin;
-	int	t = 0;
-	int	mid = begin + (end - begin) / 2;
-	int	j = mid + 1;
-	int	d[nmax];
+#include "homework3.h"
 
-	while(i <= mid && j <= end) {
-		counterIterations++;
-		if(arr[i] <= arr[j]) {
-			counterIterations++;
-			d[t] = arr[i];
-			counterSwap++;
-			i++;
-		} else {
-			d[t] = arr[j];
-			counterSwap++;
-			j++;
-		}
-		t++;
-	}
-
-	while(i <= mid) {
-		counterIterations++;
-		d[t] = arr[i];
-		counterSwap++;
-		i++;
-		t++;
-	}
-
-	while(j <= end) {
-		counterIterations++;
-		d[t] = arr[j];
-		counterSwap++;
-		j++;
-		t++;
-	}
-
-	for(i = 0; i < t; i++) {
-		counterIterations++;
-		arr[begin + i] = d[i];
-		counterSwap++;
-	}
+void HW3::merge(int *array, int l, int m, int r) {
+    int i, j, k, nl, nr;
+    nl = m-l+1; nr = r-m;
+    int larr[nl], rarr[nr];
+    //заполнение подмассивов
+    for(i = 0; i<nl; i++)
+        larr[i] = array[l+i];
+    for(j = 0; j<nr; j++)
+        rarr[j] = array[m+1+j];
+    i = 0; j = 0; k = l;
+    //слияние подмассивов
+    while(i < nl && j<nr) {
+        sf++;
+        if(larr[i] <= rarr[j]) {
+            mf++;
+            array[k] = larr[i];
+            i++;
+        }else{
+            mf++;
+            array[k] = rarr[j];
+            j++;
+        }
+        k++;
+    }
+    while(i<nl) {
+        array[k] = larr[i];
+        i++; k++;
+    }
+    while(j<nr) {
+        array[k] = rarr[j];
+        j++; k++;
+    }
+}
+void HW3::mergeSort(int *array, int l, int r) {
+    int m;
+    if(l < r) {
+        m = l+(r-l)/2;
+        mergeSort(array, l, m);
+        mergeSort(array, m+1, r);
+        merge(array, l, m, r);
+    }
 }
 
-void MergeSort(int* arr, int left, int right)
-{
-	if(left < right) {
-		counterIterations++;
-		if(right - left == 1) {
-			counterIterations++;
-			if(arr[right] < arr[left]) {
-				counterIterations++;
-				swap(arr[left], arr[right]);
-			}
-		} else {
-			MergeSort(arr, left, left + (right - left) / 2);
-			MergeSort(arr, left + (right - left) / 2 + 1, right);
-			Merge(arr, left, right);
-		}
-	}
+void HW3::run() {
+    int *arr = new int[len];
+    srand(time(0));
+    for (int i = 0; i<len; i++)
+        arr[i] = 1 + rand() % len;
+
+//    cout << "Array before Sorting: ";
+//    display(arr, len);
+
+    auto start = chrono::system_clock::now();
+    mergeSort(arr, 0, len-1);     //(n-1) for last index
+    auto end = chrono::system_clock::now();
+    chrono::duration<double, milli> elapsed_seconds = end - start;
+    cout << "working time: " << elapsed_seconds.count() << "ms" << endl;
+    cout << "sf + mf: " << sf + mf << endl;
+
+//    cout << "Array after Sorting: ";
+//    display(arr, len);
 }
 
-int main() {
-	setlocale(LC_ALL, "rus");
-	int n;
-	cout << "Size of array \n";
-	cin >> n;
-	int arr[nmax];
-	for(int i = 0; i < n; i++) {
-		arr[i] = rand() % 100;
-	}
-	cout << endl;
-	unsigned int start_time = clock();
-	MergeSort(arr, 0, n - 1);
-	unsigned int end_time = clock();
-	unsigned int search_time = start_time - end_time;
-	cout << endl;
-	cout << "Time: " << search_time << endl;
-	cout << "Swaps + Iterations: " << counterSwap + counterIterations;
+HW3::HW3(int size) {
+    len = size;
+    run();
 }
+
